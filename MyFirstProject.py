@@ -1,7 +1,7 @@
 
 #This line is a test for GitHub or is it?
 # Targets are listed as T2, T4, T5, or R,S,T,U, ect...
-
+from time import sleep
 T2 = "Servo Input for Servo1X and Servo2Y T2 "
 T4 = "Servo Input for Servo1X and Servo2Y T4"
 
@@ -9,7 +9,7 @@ T4 = "Servo Input for Servo1X and Servo2Y T4"
 def var_fun():
     '''Lets explore variable types and how to minipulate strings'''
 
-    i = 2;       #This is an integer, numbers that don't have decimals
+    i = 2      #This is an integer, numbers that don't have decimals
     n = 3.2453   #This is a float (or double), a dumber that has a decimal;
     i2 = 3      #This is another integer
 
@@ -47,13 +47,13 @@ def var_fun():
 
     #this can also be done with strings
 
-    str = "Steve is dumb."
+    str = "Steve is the coolest."
 
     dynamic_str = "I know for a fact that %s" % str #Dynamiclly insert str into dynamic_str
 
     print dynamic_str
 
-    str2 = "Kyle is awesome."
+    str2 = "Kyle has a beer belly."
 
     #Repeat
 
@@ -66,6 +66,7 @@ def test():
     print "PAS-22 Control"
     password = raw_input("Password? ").lower()
     if password == "suckit":
+        sleep(3)
         print "Welcome"
     else:
         print "Try again"
@@ -91,6 +92,7 @@ def tselect():
 if __name__ == "__main__":
 
     var_fun()   #Call the var_fun function
-    test()      #Call the test function
+    test()
+    #Call the test function
     tselect()   #Call tselect function
 
