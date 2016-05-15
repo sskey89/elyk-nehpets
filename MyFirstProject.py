@@ -2,8 +2,6 @@
 #This line is a test for GitHub or is it?
 # Targets are listed as T2, T4, T5, or R,S,T,U, ect...
 from time import sleep
-T2 = "Servo Input for Servo1X and Servo2Y T2 "
-T4 = "Servo Input for Servo1X and Servo2Y T4"
 
 #Simple Login
 def var_fun():
@@ -62,6 +60,89 @@ def var_fun():
 
     pass #If you are not returning anything then use a pass
 
+def tupple_list_dict():
+    # A tupple is an ordered list of comma separated variables that can't be edited once made
+    # This tupple contains 5 elements
+    my_tup = (1, 2, 3, 5, 9)
+    print my_tup
+
+    # You can reference a variable inside the tupple by order by using an index
+    # Indexes start at 0
+    print my_tup[0] # will print 1
+    print my_tup[3] # will print 5
+
+    # A list is the same as a tupple, but you can edit the list contents, size, etc.
+    my_list = [1, 4, 9, 2, 6, 5, 8]
+    print my_list
+
+    #Replace the 9 with a 10
+    my_list[2] = 10
+    print my_list
+
+    #Lists can be sorted
+    my_list.sort()
+    print my_list
+
+    #You can merge lists together
+    list1 = [1, 2, 3]
+    list2 = [4, 5, 6]
+
+    list3 = list1 + list2
+    print list3
+
+    #You can append to the end of the list
+    list3.append(7)
+    print list3
+
+    #You can append a list to a list
+    #This literally makes list2 an element of list1 - list inception!!
+    list1.append(list2)
+    print list1
+
+    #You can extend a list with another list
+    #This adds the elements of list 2 to list 1 just like we did with +
+    list1.extend(list2)
+    print list1
+
+    #You can pop the last variable off the list
+    var = list1.pop()
+    print var
+    print list1
+
+    # A Dictionary is a list of key,value pairs {key1:val1, key2:val2}
+    # Since the dict is based on key,value paires, order is not important
+
+    car_dict1 = {"make":"Hyundai", "model":"Elantra", "color":"Silver", "milage":35000, "hasBluetooh":True}
+    car_dict2 = {"make":"Chevy", "model":"Cavalier", "color":"Blue", "milage":195000, "hasBluetooth":False}
+    print car_dict1
+    print car_dict2
+
+    #You can get a value by key, just like indexing for lists and tupples
+    print car_dict1["make"] #Prints Hyundai
+    print car_dict2["make"] #Prints Chevy
+
+    #You can also add or edit key,value pairs the same way
+    car_dict1["milage"] = 40000
+
+    print car_dict1
+
+    car_dict1["insured"] = True
+    car_dict2["insured"] = False
+
+    print car_dict1
+    print car_dict2
+
+    #You can get a list of all the keys in a dict
+    d_keys =  car_dict1.keys()
+
+    # Now you could use a FOR loop to display all the values in a dict
+    # I will do another function that explains loops in detail
+    for k in d_keys:
+        value = car_dict1[k]
+        print "%s: %s" % (k, value)
+        pass
+
+
 def test():
     print "PAS-22 Control"
     password = raw_input("Password? ").lower()
@@ -75,24 +156,30 @@ def test():
 #Target Selection Process
 
 def tselect():
+
+    T2 = "Servo Input for Servo1X and Servo2Y T2 "
+    T4 = "Servo Input for Servo1X and Servo2Y T4"
+
     print "Tagret Selection"
     target = raw_input("Type in a Target Number:").lower()
-    if target == "T2" or target == "t2":
+    if target == "t2": # target will never == "T2" since you called .lower() above
          print T2
          return T2
-    elif target == "T4" or target == "t4":
+    elif target == "t4":
         print T4
         return T4
 
     else:
         print "Not a Valid Targrt"
-        tselect()
+        return None
+        # tselect() Try not to call a function inside of itself. Its called recursion and can waste memory
+
 
 #This is a trick used to only call what is below when you are directly calling this file, and not importing it...
 if __name__ == "__main__":
 
-    var_fun()   #Call the var_fun function
-    test()
+    #var_fun()   #Call the var_fun function
+    #test()
     #Call the test function
-    tselect()   #Call tselect function
-
+    #tselect()   #Call tselect function
+    tupple_list_dict()
