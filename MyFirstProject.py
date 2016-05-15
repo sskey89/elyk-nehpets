@@ -161,7 +161,7 @@ def tselect():
     T4 = "Servo Input for Servo1X and Servo2Y T4"
 
     print "Tagret Selection"
-    target = raw_input("Type in a Target Number:").lower()
+    target = raw_input("Type in a Target Number:")
     if target == "t2": # target will never == "T2" since you called .lower() above
          print T2
          return T2
@@ -174,6 +174,24 @@ def tselect():
         return None
         # tselect() Try not to call a function inside of itself. Its called recursion and can waste memory
 
+def stuff()
+    prices = {
+        "banana" : 4,
+        "apple" : 2,
+        "orange" : 1.5,
+        "pear" : 3
+        }
+    stock = {
+        "banana" : 6,
+        "apple" : 0,
+        "orange" : 32,
+        "pear" : 15
+        }
+    for key in prices:
+        print key
+        print "price: %d" % prices[key]
+        print "stock: %d" % stock[key]
+
 
 #This is a trick used to only call what is below when you are directly calling this file, and not importing it...
 if __name__ == "__main__":
@@ -182,4 +200,4 @@ if __name__ == "__main__":
     #test()
     #Call the test function
     #tselect()   #Call tselect function
-    tupple_list_dict()
+stuff()
