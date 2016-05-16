@@ -1,6 +1,9 @@
 from time import sleep
 from winsound import Beep
 
+'''Made major changes to Servo.py to reduce the amount of code needed.
+    Rule of Thumb with coding: You should never have to type the same code twice.'''
+
 def title():
 
     title_str = " _____    ______     _____      _____ \n"\
@@ -74,10 +77,11 @@ def password():
 def tselect():
     target_data = get_targets()     # get the dictionary of targets and coordinates
     target_list = target_data.keys() #Get a list of the keys of the dict. This is a list of valid targets.
-    target = raw_input("TYPE TARGET NUMBER: ")
+    target = raw_input("TYPE TARGET NUMBER: ").upper() #Cast input to upper case string
 
     #Make a case to gracefully exit the program
-    if target.upper == "EXIT" or target.upper == "QUIT":
+    if target == "EXIT" or target == "QUIT":
+        print "Quitting..."
         return False
 
     #Check if given target is in the target list
@@ -103,7 +107,9 @@ if __name__ == "__main__":
     print title()
     password()
     run_tselect = True
-    #This loop will run as long as run_tselect = True
+    # This loop will run as long as run_tselect = True
+    # We also could have built this loop into tselect()
+    # but I like it outside in case we want to use tselect a different way
     while run_tselect:
         run_tselect = tselect()
         pass
