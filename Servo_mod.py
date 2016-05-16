@@ -3,12 +3,12 @@ from winsound import Beep
 
 def title():
 
-    title_str = " _____    ______     _____      _____ "\
-                "|  _  |  |  ____|   /  _  \    /  _  \ "\
-                "| | / /  | |____   |  / \  |  |  / \  | "\
-                "| | \ \   \____ \  |  | |  |  |  | |  | "\
-                "| |  | |  ____| |  |  \_/  |  |  \_/  | "\
-                "|_|  |_| |______/   \_____/    \_____/ "
+    title_str = " _____    ______     _____      _____ \n"\
+                "|  _  |  |  ____|   /  _  \    /  _  \ \n"\
+                "| | / /  | |____   |  / \  |  |  / \  |\n"\
+                "| | \ \   \____ \  |  | |  |  |  | |  | \n"\
+                "| |  | |  ____| |  |  \_/  |  |  \_/  | \n"\
+                "|_|  |_| |______/   \_____/    \_____/ \n"
 
     return title_str
 
@@ -17,7 +17,8 @@ def servo_motion(x, y):
     Beep(x, y)
     pass
 
-#Use A Dictionary instead of a list. The Key is the target name, the value is a tupple of coordinates...
+# Use A Dictionary instead of a list. The Key is the target name, the value is a tupple of coordinates...
+# Eventually you will want to save this out to a file so you can add/modify target coordinates on the fly...
 def get_targets():
     return {"T2": (500,500),
                "T4": (800,500),
