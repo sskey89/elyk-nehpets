@@ -1,5 +1,5 @@
 from time import sleep
-# from winsound import Beep
+from winsound import Beep
 
 
 '''Made major changes to Servo.py to reduce the amount of code needed.
