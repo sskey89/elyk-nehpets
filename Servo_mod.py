@@ -28,6 +28,7 @@ def get_targets_from_txt():
 
     my_file = open("targets.txt", "rb") # open targets.txt, rb means read-binary mode
     data = my_file.readlines()  # Call readlines() to make a list of all the lines in the file.
+    my_file.close() # We have to close the file or it can become corrupted.
 
     data_dict = {} # make an empty dictionary to store the data
 
