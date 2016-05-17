@@ -1,6 +1,7 @@
 from time import sleep
 from winsound import Beep
 
+
 '''Made major changes to Servo.py to reduce the amount of code needed.
     Rule of Thumb with coding: You should never have to type the same code twice.'''
 
@@ -22,6 +23,47 @@ def servo_motion(x, y):
 
 # Use A Dictionary instead of a list. The Key is the target name, the value is a tupple of coordinates...
 # Eventually you will want to save this out to a file so you can add/modify target coordinates on the fly...
+
+def get_targets_from_txt():
+
+    my_file = open("targets.txt", "rb") # open targets.txt, rb means read-binary mode
+    data = my_file.readlines()  # Call readlines() to make a list of all the lines in the file.
+
+    data_dict = {} # make an empty dictionary to store the data
+
+    # Populate the dictionary... we can only do this because we know the structure of the data in targets.txt
+    # We made it a comma-separated list
+
+    for line in data:
+        # First we remove the newline characters from each string, using .replace(). Replace will find every instance
+        # of the first argument and replace it with the second argument. So here we are looking for every instance of
+        # \n and replacing it with nothing, effectively removing it.
+
+        line = line.replace("\n","")
+
+        # Now we spilt the string at each comma to make a list.
+        # split is method that can be used on strings. It will split the string into a list, using the argument to
+        # split on. So here we are splitting the string into parts using a comma as the split point
+
+        line_list = line.split(",")
+
+        #Since we put the target name first, then the coordinates in the text file, we know that the first element in
+        # the list will be the target and the others the coordinates.
+
+        target = line_list[0]
+        x_coord = line_list[1]
+        y_coord = line_list[2]
+
+        #Now we dynamically populate the dictionary
+
+        data_dict[target] = [x_coord, y_coord]
+        pass
+
+    return data_dict
+
+
+
+
 def get_targets():
     return {"T2": (500,500),
                "T4": (800,500),
