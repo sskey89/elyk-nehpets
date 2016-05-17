@@ -1,5 +1,5 @@
 from time import sleep
-from winsound import Beep
+# from winsound import Beep
 
 
 '''Made major changes to Servo.py to reduce the amount of code needed.
@@ -61,6 +61,26 @@ def get_targets_from_txt():
         pass
 
     return data_dict
+
+def update_file(filename, target_dict):
+    # This function will take the given dictionary and write it to a text file
+
+    keys = target_dict.keys() #Get all the keys of the dict
+
+    my_file = open(filename, "wb") # Now we open the file but give "wb" to write to it
+
+    for k in keys:
+        #Turn the data into a string... see if you can figure out what I am doing here
+        line = "%s, %s, %s\n" % (k, target_dict[k][0], target_dict[k][1])
+
+        #Write the line to the file
+        my_file.write(line)
+        pass
+
+    my_file.close() #close the file or it will become corrupted
+    pass
+
+
 
 
 
@@ -147,13 +167,23 @@ def tselect():
     return True
 
 if __name__ == "__main__":
-    print title()
-    password()
-    run_tselect = True
+    # print title()
+    # password()
+    # run_tselect = True
     # This loop will run as long as run_tselect = True
     # We also could have built this loop into tselect()
     # but I like it outside in case we want to use tselect a different way
-    while run_tselect:
-        run_tselect = tselect()
-        pass
+    # while run_tselect:
+    #     run_tselect = tselect()
+    #     pass
+
+    #Lets see the file stuff in action
+    my_dict = get_targets_from_txt()
+
+    #Lets add a couple targets
+    my_dict["Kyle1"] = [100, 600]
+    my_dict["Kyle2"] = [400, 500]
+
+    #Now lets save out the file, we will use a different file name for comparison
+    update_file("updated_targets.txt", my_dict)
 
