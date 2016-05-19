@@ -1,5 +1,10 @@
+from __future__ import division
 from time import sleep
-from winsound import Beep
+import Adafruit_PCA9685
+
+pwm = Adafruit_PCA9685.PCA9685()
+
+
 
 
 '''Made major changes to Servo.py to reduce the amount of code needed.
@@ -17,9 +22,7 @@ def title():
     return title_str
 
 
-def servo_motion(x, y):
-    Beep(x, y)
-    pass
+pwm.set_pwm_freq(60)
 
 # Use A Dictionary instead of a list. The Key is the target name, the value is a tupple of coordinates...
 # Eventually you will want to save this out to a file so you can add/modify target coordinates on the fly...
@@ -40,7 +43,7 @@ def get_targets_from_txt():
         # of the first argument and replace it with the second argument. So here we are looking for every instance of
         # \n and replacing it with nothing, effectively removing it.
 
-        line = line.replace("\n","")
+        line = line.replace("\n","","","")
 
         # Now we spilt the string at each comma to make a list.
         # split is method that can be used on strings. It will split the string into a list, using the argument to
@@ -54,10 +57,12 @@ def get_targets_from_txt():
         target = line_list[0]
         x_coord = line_list[1]
         y_coord = line_list[2]
+        a_coord = line_list[3]
+        b_coord = line_list[4]
 
         #Now we dynamically populate the dictionary
 
-        data_dict[target] = [x_coord, y_coord]
+        data_dict[target] = [x_coord, y_coord, a_coord, b_coord]
         pass
 
     return data_dict
@@ -85,46 +90,55 @@ def update_file(filename, target_dict):
 
 
 
-def get_targets():
-    return {"T2": (500,500),
-               "T4": (800,500),
-               "T5": (800,500),
-               "T6": (800,500),
-               "T7": (800,500),
-               "T8": (800,500),
-               "T9": (800,500),
-               "T11": (800,500),
-               "T15": (800,500),
-               "T19": (800,500),
-               "T22": (800,500),
-               "T25": (800,500),
-               "T30": (800,500),
-               "T32": (800,500),
-               "T34": (800,500),
-               "T35": (800,500),
-               "T36": (800,500),
-               "T37": (800,500),
-               "T38": (800,500),
-               "T39": (800,500),
-               "T40": (800,500),
-               "T41": (800,500),
-               "T44": (800,500),
-               "D": (800,500),
-               "E": (800,500),
-               "F": (800,500),
-               "G": (800,500),
-               "H": (800,500),
-               "I": (800,500),
-               "K": (800,500),
-               "M": (800,500),
-               "N": (800,500),
-               "P": (800,500),
-               "Q": (800,500),
-               "R": (800,500),
-               "S": (800,500),
-               "T": (800,500),
-               "Y": (800,500)
-               }
+#def get_targets():
+#    return {"T2": (500,500),
+#               "T4": (800,500),
+#               "T5": (800,500),
+#               "T6": (800,500),
+#               "T7": (800,500),
+#               "T8": (800,500),
+#               "T9": (800,500),
+#               "T11": (800,500),
+#               "T15": (800,500),
+#               "T19": (800,500),
+#               "T22": (800,500),
+#               "T25": (800,500),
+#               "T30": (800,500),
+#               "T32": (800,500),
+ #              "T34": (800,500),
+ #              "T35": (800,500),
+ #              "T36": (800,500),
+ #              "T37": (800,500),
+ #              "T38": (800,500),
+ #              "T39": (800,500),
+ #              "T40": (800,500),
+ #              "T41": (800,500),
+      #         "T44": (800,500),
+     #          "D": (800,500),
+    #           "E": (800,500),
+   #            "F": (800,500),
+  #             "G": (800,500),
+ #              "H": (800,500),
+#               "I": (800,500),
+#               "K": (800,500),
+#               "M": (800,500),
+#               "N": (800,500),
+#               "P": (800,500),
+#               "Q": (800,500),
+#               "R": (800,500),
+#               "S": (800,500),
+#               "T": (800,500),
+#               "Y": (800,500)
+  #             }
+
+def servo_motion(channel, pulse):    # x = channel    y = pulse 
+    pulse_length = 1000000
+    pulse_length //= 60
+    pulse_length //=4096
+    pulse *=1000
+    pulse //=pulse_length
+    pwm.set_pwm(channel, 0, pulse)
+    pass
 
 def password():
     pword = raw_input("PASSWORD? ")
@@ -138,7 +152,7 @@ def password():
 
 
 def tselect():
-    target_data = get_targets()     # get the dictionary of targets and coordinates
+    target_data = get_targets_from_txt()     # get the dictionary of targets and coordinates
     target_list = target_data.keys() #Get a list of the keys of the dict. This is a list of valid targets.
     target = raw_input("TYPE TARGET NUMBER: ").upper() #Cast input to upper case string
 
@@ -155,27 +169,33 @@ def tselect():
         sleep(1) #Not sure why you want to sleep here...
 
         #Set variables for your x and y coordinates... dont really need to do this but its easier to read the code
-        x_coord = coords[0]
-        y_coord = coords[1]
-
+        x_coord = int(coords[0])
+        y_coord = int(coords[1])
+        a_coord = int(coords[2])
+        b_coord = int(coords[3])
+        
         #Call servo motion given the coordinates
-        servo_motion(x_coord, y_coord)
+        
+        pwm.set_pwm(x_coord, 0, y_coord)
+        pwm.set_pwm(a_coord, 0, b_coord)
+        return tselect()
     else:
         print "Invalid Target"
         pass
 
     return True
 
+
 if __name__ == "__main__":
-    # print title()
-    # password()
-    # run_tselect = True
+    print title()
+    password()
+    run_tselect = True
     # This loop will run as long as run_tselect = True
     # We also could have built this loop into tselect()
     # but I like it outside in case we want to use tselect a different way
     # while run_tselect:
-    #     run_tselect = tselect()
-    #     pass
+    run_tselect = tselect()
+    pass
 
     #Lets see the file stuff in action
     my_dict = get_targets_from_txt()
