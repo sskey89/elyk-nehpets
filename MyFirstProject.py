@@ -2,7 +2,7 @@
 #This line is a test for GitHub or is it?
 # Targets are listed as T2, T4, T5, or R,S,T,U, ect...
 from time import sleep
-
+\
 #Simple Login
 def var_fun():
     '''Lets explore variable types and how to minipulate strings'''
@@ -174,7 +174,7 @@ def tselect():
         return None
         # tselect() Try not to call a function inside of itself. Its called recursion and can waste memory
 
-def stuff()
+def stuff():
     prices = {
         "banana" : 4,
         "apple" : 2,

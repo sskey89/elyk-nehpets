@@ -1,3 +1,4 @@
+
 from time import sleep
 from winsound import Beep
 
@@ -17,14 +18,12 @@ def title():
     return title_str
 
 
-def servo_motion(x, y):
-    Beep(x, y)
-    pass
 
 # Use A Dictionary instead of a list. The Key is the target name, the value is a tupple of coordinates...
 # Eventually you will want to save this out to a file so you can add/modify target coordinates on the fly...
 
 def get_targets_from_txt():
+
 
     my_file = open("targets.txt", "rb") # open targets.txt, rb means read-binary mode
     data = my_file.readlines()  # Call readlines() to make a list of all the lines in the file.
@@ -88,42 +87,42 @@ def update_file(filename, target_dict):
 def get_targets():
     return {"T2": (500,500),
                "T4": (800,500),
-               "T5": (800,500),
-               "T6": (800,500),
-               "T7": (800,500),
-               "T8": (800,500),
-               "T9": (800,500),
-               "T11": (800,500),
-               "T15": (800,500),
-               "T19": (800,500),
-               "T22": (800,500),
-               "T25": (800,500),
-               "T30": (800,500),
-               "T32": (800,500),
-               "T34": (800,500),
-               "T35": (800,500),
-               "T36": (800,500),
-               "T37": (800,500),
-               "T38": (800,500),
-               "T39": (800,500),
-               "T40": (800,500),
-               "T41": (800,500),
-               "T44": (800,500),
-               "D": (800,500),
-               "E": (800,500),
-               "F": (800,500),
-               "G": (800,500),
-               "H": (800,500),
-               "I": (800,500),
-               "K": (800,500),
-               "M": (800,500),
-               "N": (800,500),
-               "P": (800,500),
-               "Q": (800,500),
-               "R": (800,500),
-               "S": (800,500),
-               "T": (800,500),
-               "Y": (800,500)
+               #"T5": (800,500),
+               #"T6": (800,500),
+               #"T7": (800,500),
+               #"T8": (800,500),
+               #"T9": (800,500),
+               #"T11": (800,500),
+               #"T15": (800,500),
+               #"T19": (800,500),
+               #"T22": (800,500),
+               #"T25": (800,500),
+               #"T30": (800,500),
+               #"T32": (800,500),
+               #"T34": (800,500),
+               #"T35": (800,500),
+               #"T36": (800,500),
+               #"T37": (800,500),
+               #"T38": (800,500),
+               #"T39": (800,500),
+               #"T40": (800,500),
+               #"T41": (800,500),
+               #"T44": (800,500),
+               #"D": (800,500),
+               #"E": (800,500),
+               #"F": (800,500),
+               #"G": (800,500),
+               #"H": (800,500),
+               #"I": (800,500),
+               #"K": (800,500),
+               #"M": (800,500),
+               #"N": (800,500),
+               #"P": (800,500),
+               #"Q": (800,500),
+               #"R": (800,500),
+               #"S": (800,500),
+               #"T": (800,500),
+               #"Y": (800,500)
                }
 
 def password():
@@ -138,7 +137,7 @@ def password():
 
 
 def tselect():
-    target_data = get_targets()     # get the dictionary of targets and coordinates
+    target_data = get_targets_from_txt()     # get the dictionary of targets and coordinates
     target_list = target_data.keys() #Get a list of the keys of the dict. This is a list of valid targets.
     target = raw_input("TYPE TARGET NUMBER: ").upper() #Cast input to upper case string
 
@@ -166,16 +165,22 @@ def tselect():
 
     return True
 
+def servo_motion(x, y):
+    x = int(x)
+    y = int(y)
+    Beep(x, y)
+    pass
+
 if __name__ == "__main__":
     # print title()
     # password()
-    # run_tselect = True
+    run_tselect = True
     # This loop will run as long as run_tselect = True
     # We also could have built this loop into tselect()
     # but I like it outside in case we want to use tselect a different way
-    # while run_tselect:
-    #     run_tselect = tselect()
-    #     pass
+    while run_tselect:
+        run_tselect = tselect()
+        pass
 
     #Lets see the file stuff in action
     my_dict = get_targets_from_txt()
