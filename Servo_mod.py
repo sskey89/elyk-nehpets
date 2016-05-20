@@ -43,7 +43,9 @@ def get_targets_from_txt():
         # of the first argument and replace it with the second argument. So here we are looking for every instance of
         # \n and replacing it with nothing, effectively removing it.
 
-        line = line.replace("\n","") # "",""
+        line = line.replace("\n","",len(line))
+        
+        
 
         # Now we spilt the string at each comma to make a list.
         # split is method that can be used on strings. It will split the string into a list, using the argument to
@@ -57,12 +59,12 @@ def get_targets_from_txt():
         target = line_list[0]
         x_coord = line_list[1]
         y_coord = line_list[2]
-        # a_coord = line_list[3]
-        # b_coord = line_list[4]
+        a_coord = line_list[3]
+        b_coord = line_list[4]
 
         #Now we dynamically populate the dictionary
 
-        data_dict[target] = [x_coord, y_coord] #a_coord, b_coord
+        data_dict[target] = [x_coord, y_coord, a_coord, b_coord]
         pass
 
     return data_dict
@@ -171,13 +173,13 @@ def tselect():
         #Set variables for your x and y coordinates... dont really need to do this but its easier to read the code
         x_coord = int(coords[0])
         y_coord = int(coords[1])
-        # a_coord = int(coords[2])
-        # b_coord = int(coords[3])
+        a_coord = int(coords[2])
+        b_coord = int(coords[3])
         
         #Call servo motion given the coordinates
         
         pwm.set_pwm(x_coord, 0, y_coord)
-        # pwm.set_pwm(a_coord, 0, b_coord)
+        pwm.set_pwm(a_coord, 0, b_coord)
         
     else:
         print "Invalid Target"
