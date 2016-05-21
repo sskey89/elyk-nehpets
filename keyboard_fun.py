@@ -6,7 +6,7 @@ class _Getch:
             old_settings = termios.tcgetattr(fd)
             try:
                 tty.setraw(sys.stdin.fileno())
-                ch = sys.stdin.read(3)
+                ch = sys.stdin.read(1)
             finally:
                 termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
             return ch
@@ -16,20 +16,29 @@ def get():
         while(1):
                 k=inkey()
                 if k!='':break
-        if k=='\x1b[A':
-                print "up"
-        elif k=='\x1b[B':
-                print "down"
-        elif k=='\x1b[C':
-                print "right"
-        elif k=='\x1b[D':
-                print "left"
+        # print ord(k)
+        if k=='\x1b':
+            k = inkey()
+            if k=="[":
+                k = inkey()
+                if k == "A":
+                    return "up"
+                elif k=='B':
+                    return "down"
+                elif k=='C':
+                    return "right"
+                elif k=='D':
+                    return "left"
+        elif ord(k) == 3:
+            exit(0)
+            pass
         else:
-                print "not an arrow key!"
+            return k
+
 
 def main():
         for i in range(0,20):
-                get()
+                print get()
 
 if __name__=='__main__':
         main()
