@@ -1,14 +1,15 @@
+
 # Simple demo of of the PCA9685 PWM servo/LED controller library.
 # This will move channel 0 from min to max position repeatedly.
 # Author: Tony DiCola
 # License: Public Domain
 from __future__ import division
 import time
-
+from keyboard_fun import get
 # Import the PCA9685 module.
 import Adafruit_PCA9685
 
-
+d = 200000
 # Uncomment to enable debug output.
 #import logging
 #logging.basicConfig(level=logging.DEBUG)
@@ -35,6 +36,13 @@ def set_servo_pulse(channel, pulse):
     pwm.set_pwm(channel, 0, pulse)
 
 # Set frequency to 60hz, good for servos.
+def delay(num):
+    n = 0
+    while n < num:
+        n = n+1
+        pass
+    pass
+
 def test():
     pwm.set_pwm_freq(60)
 
@@ -50,15 +58,53 @@ def test():
         pass
 
 def characterize_servo(channel):
-    start = 0
-    fin = 1000
+    pwm.set_pwm_freq(50)
+    start = 130
+    fin = 540
+    middle = int((start + fin)/2)
     while start <= fin:
         print "Setting servo to position: %d" % start
         pwm.set_pwm(channel, 0, start)
-        time.sleep(1)
+        delay(d)
         start = start + 1
         pass
     pass
-
+    pwm.set_pwm(channel, 0, middle)
+    time.sleep(1)
+       
+def move_pt(pan_ch, tilt_ch):
+    pwm.set_pwm_freq(50)
+    pan_start = 130
+    tilt_start = 160
+    end = 540
+    #pan_pos = int((pan_start + end)/2)
+    #tilt_pos = int((tilt_start + end)/2)
+    pan_pos = 344
+    tilt_pos = 335
+    pwm.set_pwm(pan_ch, 0, pan_pos)
+    pwm.set_pwm(tilt_ch, 0, tilt_pos)
+    while(True):
+        k = get()
+        if k == "left" and pan_pos < end:
+           pan_pos += 1
+           pass
+	elif k == "right" and pan_pos > pan_start:
+           pan_pos -= 1
+	   pass
+        elif k == "up" and tilt_pos < end:
+	   tilt_pos += 1
+           pass
+	elif k == "down" and tilt_pos > tilt_start:
+	   tilt_pos -= 1
+           pass	
+        if k !="":
+           print "Pan Pos: %d, Tilt Pos: %d" % (pan_pos, tilt_pos)
+           pass
+        pwm.set_pwm(pan_ch, 0, pan_pos)
+        pwm.set_pwm(tilt_ch, 0, tilt_pos)
+	pass 
+    
 if __name__ == "__main__":
-    characterize_servo(1)
+    #characterize_servo(0)
+    move_pt(0,1)
+	
