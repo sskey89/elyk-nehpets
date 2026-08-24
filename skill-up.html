@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0b1220">
+<title>SE Skill-Up</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* SE Skill-Up board. Enterprise learning surface for the estate platform:
+   a glossary index of framework terms plus skill-up paths for current projects,
+   structured on a Systems Approach to Training model (two-tier objectives,
+   behavior-condition-standard anatomy, defined target populations).
+   Governed by the skill-up-knowledge skill. Blueprint-dark, no grid. */
+:root{
+  --paper:#0b1220; --panel:#111c2e; --panel-2:#16233a; --frame:#2a3b52;
+  --ink:#e6edf3; --dim:#8a97a8; --faint:#5b6b7e;
+  --cyan:#58c4dd; --cyan-deep:#2a8ba0; --amber:#e0a83c; --green:#5fbf7a; --violet:#9b7cc8;
+  --mono:"IBM Plex Mono",ui-monospace,monospace; --sans:"Inter",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+header{border-bottom:1.5px solid var(--frame);position:sticky;top:0;z-index:30;background:rgba(11,18,32,.94);backdrop-filter:blur(8px)}
+.head-inner{max-width:1080px;margin:0 auto;padding:13px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.logo{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
+.logo span{color:var(--cyan)}
+.views{display:flex;gap:0;border:1px solid var(--frame);border-radius:7px;overflow:hidden;font-family:var(--mono);font-size:11px}
+.shell-link{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;padding:8px 14px;border-radius:7px;border:1px solid var(--frame);color:var(--dim);text-decoration:none;transition:border-color .13s,color .13s;margin-left:12px}
+.shell-link:hover{border-color:var(--cyan);color:var(--ink)}
+.views button{font-family:inherit;font-size:inherit;background:none;border:none;color:var(--dim);padding:8px 15px;cursor:pointer;letter-spacing:.05em;text-transform:uppercase}
+.views button.on{background:var(--cyan);color:#04121a;font-weight:600}
+.intro{padding:26px 0 8px}
+.intro h1{font-size:clamp(21px,3.4vw,28px);font-weight:800;letter-spacing:-.01em;margin-bottom:8px}
+.intro p{color:var(--dim);font-size:13.5px;max-width:74ch}
+.audience{display:flex;gap:8px;flex-wrap:wrap;padding:16px 0 4px}
+.aud-btn{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;padding:7px 13px;border-radius:6px;border:1px solid var(--frame);background:var(--panel);color:var(--dim);cursor:pointer}
+.aud-btn.on{border-color:var(--violet);color:var(--violet);background:rgba(155,124,200,.08)}
+.aud-note{font-size:11.5px;color:var(--faint);padding:6px 0 0;font-style:italic}
+
+.zone{display:none;padding-bottom:60px}
+.zone.on{display:block}
+
+/* paths */
+.path{border:1px solid var(--frame);border-radius:12px;background:var(--panel);margin-top:16px;overflow:hidden}
+.path-head{padding:15px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.path-head:hover{background:var(--panel-2)}
+.path-head .p-name{font-size:15px;font-weight:700}
+.path-head .p-kicker{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--cyan);margin-bottom:3px}
+.path-head .p-count{font-family:var(--mono);font-size:10px;color:var(--faint);white-space:nowrap}
+.path-body{display:none;border-top:1px solid var(--frame);padding:16px 18px}
+.path.open .path-body{display:block}
+.tlo{border-left:3px solid var(--cyan);padding:10px 14px;background:var(--panel-2);border-radius:0 8px 8px 0;margin-bottom:14px}
+.tlo .t-label{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--cyan);margin-bottom:4px}
+.tlo .t-text{font-size:13px;line-height:1.55}
+.bcs{display:grid;grid-template-columns:88px 1fr;gap:4px 12px;margin-top:9px;font-size:12px}
+.bcs dt{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);padding-top:2px}
+.bcs dd{color:var(--dim);line-height:1.45}
+.elo{border:1px solid var(--frame);border-radius:9px;padding:11px 14px;margin-bottom:9px}
+.elo .e-label{font-family:var(--mono);font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:var(--violet)}
+.elo .e-text{font-size:12.5px;margin-top:3px;line-height:1.5}
+.elo .e-res{font-family:var(--mono);font-size:10px;color:var(--faint);margin-top:7px}
+.elo .e-res a{color:var(--cyan-deep);text-decoration:none}
+.elo .e-res a:hover{text-decoration:underline}
+.ramp{margin-top:10px;font-size:12px;color:var(--dim);border-top:1px dashed var(--frame);padding-top:9px;line-height:1.55}
+.ramp b{color:var(--violet);font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase}
+
+/* glossary */
+.g-search{width:100%;font-family:var(--mono);font-size:13px;color:var(--ink);background:var(--panel);border:1px solid var(--frame);border-radius:8px;padding:11px 14px;margin-top:16px}
+.g-search:focus{outline:none;border-color:var(--cyan)}
+.g-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:11px;margin-top:14px}
+.g-item{border:1px solid var(--frame);border-radius:10px;background:var(--panel);padding:13px 15px}
+.g-item .g-term{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--cyan);margin-bottom:5px}
+.g-item .g-def{font-size:12px;color:var(--dim);line-height:1.5}
+footer{border-top:1px solid var(--frame);padding:20px 0 44px;color:var(--faint);font-family:var(--mono);font-size:10.5px;text-align:center;line-height:1.7}
+@media(max-width:560px){.bcs{grid-template-columns:1fr}.bcs dt{padding-top:6px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head-inner">
+    <div class="logo">SE <span>Skill-Up</span></div>
+    <div class="views">
+      <button id="vPaths" class="on">Learning paths</button>
+      <button id="vGlossary">Glossary index</button>
+    </div>
+    <a class="shell-link" href="se-overlay.html">Shell</a>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="intro">
+    <h1>Skill-up for the estate platform</h1>
+    <p>Structured learning paths for the platform's current projects, built on a systems approach: every path states a terminal objective with its behavior, condition, and standard, broken into enabling objectives with the resources to reach them. Select your starting point; the same objectives hold for everyone, only the ramp changes.</p>
+    <div class="audience" id="audBtns">
+      <button class="aud-btn on" data-a="new">New to engineering</button>
+      <button class="aud-btn" data-a="eng">Engineer</button>
+      <button class="aud-btn" data-a="stake">Corporate stakeholder</button>
+    </div>
+    <div class="aud-note" id="audNote"></div>
+  </div>
+
+  <section class="zone on" id="z-paths" aria-label="Learning paths"></section>
+
+  <section class="zone" id="z-glossary" aria-label="Glossary">
+    <input class="g-search" id="gSearch" placeholder="Search terms..." aria-label="Search glossary">
+    <div class="g-grid" id="gGrid"></div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    SE Skill-Up &middot; objectives carry a behavior, a condition, and a standard, or they are not objectives<br>
+    Structured per the skill-up-knowledge skill &middot; paths update with the projects they teach (same-batch rule)
+  </div>
+</footer>
+
+<!-- ===== SKILLUP_DATA (update with the projects it teaches; same-batch rule) ===== -->
+<script id="skillup-data" type="application/json">
+{
+  "audiences": {
+    "new": "Ramp notes below each objective assume no prior engineering background. Start with the glossary index, then take paths top to bottom.",
+    "eng": "Ramp notes assume working engineering fluency. Skip glossary items you know; objectives and standards are identical.",
+    "stake": "Ramp notes point to the outcome and governance view of each objective. The standard tells you what done means; the boards show it."
+  },
+  "paths": [
+    {
+      "id": "estate-map",
+      "kicker": "Platform core",
+      "name": "The Estate Map",
+      "tlo": {
+        "text": "Maintain an enterprise estate map as the shared source of truth for products and connections.",
+        "behavior": "Add, update, and audit products and connections on the estate map",
+        "condition": "Given the running board, the entry skill, and a current map export",
+        "standard": "Every change imports cleanly as a complete merged file, preserves all untouched fields, uses only fixed enum values, and tags inferred connections as architecture hypotheses"
+      },
+      "elos": [
+        {"text":"Read the map: locate a product, its connections, category, owner, and governing procedures.","res":[["Estate Map board","estate-map.html"]]},
+        {"text":"Produce an import-ready entry from a plain-language request using the entry skill's merged-file mode.","res":[["Entry skill",".claude/skills/estate-map-entry/SKILL.md"]]},
+        {"text":"Run a compliance audit with the advisor skill and read its findings, including register health.","res":[["Advisor skill",".claude/skills/estate-map-advisor/SKILL.md"]]},
+        {"text":"Explain why import replaces the whole map and what that requires of every output.","res":[["Design map","docs/estate-map-design.md"]]}
+      ],
+      "ramp": {
+        "new": "Start by opening the board and clicking ten products before touching JSON. The glossary entries for product, connection, and enum are your first three cards.",
+        "eng": "The schema is the skill file's contract; read Mode 2 first, everything else follows from import-replaces-all.",
+        "stake": "One map, one truth: the standard means no silent edits and no invented connections, which is what makes the map auditable."
+      }
+    },
+    {
+      "id": "governance",
+      "kicker": "Governance",
+      "name": "SOPs, ADRs, and the approval path",
+      "tlo": {
+        "text": "Work inside the governance framework and route every standard through its lifecycle.",
+        "behavior": "Apply the correct procedures and decision records to new work, and route changes through the governed lifecycle",
+        "condition": "Given the governance board, the registry, and a proposed piece of work",
+        "standard": "Work names its governing procedures before build; nothing is marked approved outside the human path; overdue reviews are flagged, not ignored"
+      },
+      "elos": [
+        {"text":"Read the governance board: status, owner, and review date of every procedure and decision record.","res":[["Governance board","governance-board.html"]]},
+        {"text":"State the lifecycle (draft, under review, approved, retired) and who may move a standard between states.","res":[["Governance guide","governance-guide.html"]]},
+        {"text":"Attach the applicable procedures to a new solution at intake using the intake tool's suggestions.","res":[["Solutions intake","solutions-intake.html"]]},
+        {"text":"Explain the write/judge split and identify which tools write and which judge.","res":[["Governance guide","governance-guide.html"]]}
+      ],
+      "ramp": {
+        "new": "The guide's interactive flows are the fastest on-ramp; the locked approval button is the whole philosophy in one control.",
+        "eng": "Treat the registry as the API of governance: your work declares dependencies on procedure IDs the way code declares imports.",
+        "stake": "The board's attention banner is the executive view: what is approved, what is draft, and what is overdue, at a glance."
+      }
+    },
+    {
+      "id": "security",
+      "kicker": "Security",
+      "name": "The threat register",
+      "tlo": {
+        "text": "Operate the estate's threat register with verified, sourced entries only.",
+        "behavior": "Track, triage, and close threats against estate products",
+        "condition": "Given the security board, the register schema, and provider advisories",
+        "standard": "Every entry carries a primary source and an as-of date; watch means a real advisory not yet triaged; closure requires a retrospective; nothing is ever invented to fill a gap"
+      },
+      "elos": [
+        {"text":"Read the register: status lifecycle from watch to closed, severity, affected products, and blast estimates.","res":[["Security board","security.html"]]},
+        {"text":"Verify a claim to its primary source before asserting it, and treat an unverifiable claim as a defect.","res":[["Migration note","docs/schema-v2-security-migration.md"]]},
+        {"text":"Distinguish a sourced reference model from a labeled synthetic demo by its provenance block.","res":[["Migration note","docs/schema-v2-security-migration.md"]]},
+        {"text":"Route a red-team finding into the register with the exercise as its source and a human owner for triage.","res":[["Security board","security.html"]]}
+      ],
+      "ramp": {
+        "new": "Learn the status words first; they are a lifecycle, not labels. A threat is a story from watch to closed with a retrospective at the end.",
+        "eng": "The register discipline is stricter than the map's: a connection may be a labeled guess, a threat may not. Internalize why before writing entries.",
+        "stake": "The standard is the assurance: no invented threats, no silent closures, and an audit trail from advisory to retrospective."
+      }
+    },
+    {
+      "id": "agents",
+      "kicker": "AI engineering",
+      "name": "Agents and the write/judge split",
+      "tlo": {
+        "text": "Design agent workflows where generation and evaluation never share a hand.",
+        "behavior": "Select the right agent platform and structure write and judge roles for a new AI solution",
+        "condition": "Given the platform decision framework, the intake capability profile, and the governing procedures",
+        "standard": "Platform choice follows the framework's ordered rules; no agent approves its own output; model choice is benchmarked, not defaulted"
+      },
+      "elos": [
+        {"text":"Apply the seven platform rules to a solution and state which rule decided the lane.","res":[["Platform decision framework","docs/agent-platform-decision.md"]]},
+        {"text":"Identify write-side and judge-side roles in the estate's existing agent pairs.","res":[["Design map","docs/estate-map-design.md"]]},
+        {"text":"State when a bounded transform should skip the agent shell entirely.","res":[["Platform decision framework","docs/agent-platform-decision.md"]]},
+        {"text":"Explain how telemetry rolls up to the product node and why high spend without traces cannot be cost-audited.","res":[["Design map","docs/estate-map-design.md"]]}
+      ],
+      "ramp": {
+        "new": "One idea carries this path: the tool that finds a problem must not be the tool that created it. Every rule is that idea applied.",
+        "eng": "Work the seven rules against a real solution you know; the first rule that fires decides, and ties go to governance.",
+        "stake": "The framework prevents both platform lock-in by default and ungoverned agent sprawl: every agent lands on the map either way."
+      }
+    },
+    {
+      "id": "m365",
+      "kicker": "Deployment",
+      "name": "The platform in Microsoft 365",
+      "tlo": {
+        "text": "Stand up and operate the platform on a SharePoint-hosted site using the JSON upload loop.",
+        "behavior": "Deploy the boards and run the capture-import-save-review loop",
+        "condition": "Given a SharePoint document library, the board files, and the build guide",
+        "standard": "Boards serve to signed-in users only; maps save to the versioned list; data and boards land in one upload batch with one version comment"
+      },
+      "elos": [
+        {"text":"Host the boards in a document library and confirm tenant permissions apply.","res":[["M365 build guide","docs/m365-build-guide.md"]]},
+        {"text":"Run the full loop: intake produces JSON, import replaces the map, save versions it, export round-trips it.","res":[["M365 build guide","docs/m365-build-guide.md"]]},
+        {"text":"State what the three-tier storage backend detects and why the same file works in all three environments.","res":[["Design map","docs/estate-map-design.md"]]},
+        {"text":"Identify which automation belongs to a later phase and what a flow must prove before it is built.","res":[["M365 build guide","docs/m365-build-guide.md"]]}
+      ],
+      "ramp": {
+        "new": "The whole deployment is uploads and one list. If you can move a file, you can run this loop; the guide shows each step.",
+        "eng": "Read the storage-tier detection before anything else; it explains why there is no build step and no server to stand up.",
+        "stake": "The pitch line is literal: the tool was built and governed using itself, and adoption starts with an upload, not a project."
+      }
+    }
+  ],
+  "glossary": [
+    {"term":"Estate map","def":"The interactive index of every product an enterprise owns and every connection between them; the shared source of truth for estate state."},
+    {"term":"Product","def":"A single entry on the map: a system, platform, or tool with a category, owner, and optional telemetry, learning links, and procedure tags."},
+    {"term":"Connection","def":"A typed, directional relationship between two products, carrying integration type and notes. Inferred connections are tagged architecture hypothesis."},
+    {"term":"Architecture hypothesis","def":"A connection believed to exist but not yet confirmed by documentation; labeled so a guess can never impersonate a fact."},
+    {"term":"SOP (Standard Operating Procedure)","def":"An approved, versioned procedure governing how solutions are built. Carries an owner and a review-by date; flagged when overdue."},
+    {"term":"ADR (Architecture Decision Record)","def":"A recorded design decision with its reasoning, so the platform's shape can be audited and revisited deliberately."},
+    {"term":"Lifecycle (governance)","def":"Draft, under review, approved, retired. Only a human owner moves a standard to approved; a revision re-enters as draft."},
+    {"term":"Write/judge split","def":"Generation and evaluation are separate roles; no tool or agent grades its own output. The estate's core structural safeguard."},
+    {"term":"Import-ready (Mode 2)","def":"A complete merged map file that imports directly, preserving every untouched field, because import replaces the whole map."},
+    {"term":"Enum","def":"A fixed list of allowed values (categories, connection types) set by the application; new values are proposed as app changes, never free-typed into data."},
+    {"term":"Threat register","def":"The security board's ledger of verified threats against estate products, each with a primary source, status, owner, and as-of date."},
+    {"term":"Watch (threat status)","def":"A real, sourced advisory not yet triaged in this estate. Never a placeholder or a suspicion."},
+    {"term":"Retrospective (retro)","def":"Required at threat closure: what would have caught this earlier. Closure without a retro is a defect."},
+    {"term":"Blast estimate","def":"Directly affected products plus one-hop neighbors, stated explicitly as an adjacency estimate from the map, not a verified impact analysis."},
+    {"term":"Provenance block","def":"A data file's self-description (kind, statement, as-of) that lets tools and agents tell a sourced reference model from a synthetic demo mechanically."},
+    {"term":"Telemetry (AI)","def":"Per-product token usage, cost, and benchmark scores with an as-of period; rolls up to the product node so spend is visible in estate context."},
+    {"term":"Benchmark score","def":"The evaluation pass rate for an agent, skill, or flow, paired with a target; below-target quality is fixed before spend is trimmed."},
+    {"term":"Pattern floor","def":"A named external pattern adopted as a starting point to improve upon, never a ceiling; deviations are recorded with reasons."},
+    {"term":"Registry","def":"A source-of-truth data file (governance, models, boards) that its board reads and never writes; changes ride the governed path."},
+    {"term":"Same-batch rule","def":"A data change and the board that renders it land in one commit or upload batch with one version comment, so views never drift from data."},
+    {"term":"RAG (Retrieval-Augmented Generation)","def":"Generation grounded in retrieved sources, where every claim traces to what was retrieved; retrieval without a citable source is memory, not evidence."},
+    {"term":"MCP (Model Context Protocol)","def":"A protocol connecting AI models to tools and data servers; MCP-connected solutions carry the MCP security procedure tag."},
+    {"term":"TLO (Terminal Learning Objective)","def":"The behavior a learner performs at the end of a path, stated with its condition and standard."},
+    {"term":"ELO (Enabling Learning Objective)","def":"A prerequisite skill or knowledge component that builds toward a terminal objective."},
+    {"term":"Behavior, condition, standard","def":"The anatomy of a real objective: what is performed, under what circumstances, and how well. If one is missing, it is not yet an objective."}
+  ]
+}
+</script>
+<!-- ===== SKILLUP_DATA END ===== -->
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const DATA=JSON.parse($("skillup-data").textContent);
+let audience="new";
+
+/* views */
+$("vPaths").onclick=()=>{setView("paths")};
+$("vGlossary").onclick=()=>{setView("glossary")};
+function setView(v){
+  $("vPaths").classList.toggle("on",v==="paths");
+  $("vGlossary").classList.toggle("on",v==="glossary");
+  $("z-paths").classList.toggle("on",v==="paths");
+  $("z-glossary").classList.toggle("on",v==="glossary");
+}
+
+/* audience lens */
+function setAudience(a){
+  audience=a;
+  document.querySelectorAll(".aud-btn").forEach(b=>b.classList.toggle("on",b.dataset.a===a));
+  $("audNote").textContent=DATA.audiences[a];
+  renderPaths();
+}
+document.querySelectorAll(".aud-btn").forEach(b=>b.onclick=()=>setAudience(b.dataset.a));
+
+/* paths */
+function renderPaths(){
+  const z=$("z-paths"); 
+  const openIds=[...z.querySelectorAll(".path.open")].map(p=>p.dataset.id);
+  z.innerHTML="";
+  DATA.paths.forEach(p=>{
+    const d=document.createElement("div");
+    d.className="path"+(openIds.includes(p.id)?" open":"");
+    d.dataset.id=p.id;
+    const elos=p.elos.map((e,i)=>{
+      /* Boards navigate in place, like every other board-to-board link in the set.
+         Reference documents open aside: same-tab would strand a learner in raw
+         markdown with no header, no Shell link, and nothing but Back to escape. */
+      const res=(e.res||[]).map(([label,href])=>{
+        const aside=/\.md$/i.test(href);
+        return '<a href="'+href+'"'+(aside?' target="_blank" rel="noopener"':'')+'>'+label+'</a>';
+      }).join(" &middot; ");
+      return '<div class="elo"><span class="e-label">Enabling objective '+(i+1)+'</span><div class="e-text">'+e.text+'</div>'+(res?'<div class="e-res">'+res+'</div>':'')+'</div>';
+    }).join("");
+    d.innerHTML='<div class="path-head"><div><div class="p-kicker">'+p.kicker+'</div><div class="p-name">'+p.name+'</div></div><span class="p-count">'+p.elos.length+' enabling objectives</span></div>'+
+      '<div class="path-body">'+
+      '<div class="tlo"><div class="t-label">Terminal objective</div><div class="t-text">'+p.tlo.text+'</div>'+
+      '<dl class="bcs"><dt>Behavior</dt><dd>'+p.tlo.behavior+'</dd><dt>Condition</dt><dd>'+p.tlo.condition+'</dd><dt>Standard</dt><dd>'+p.tlo.standard+'</dd></dl></div>'+
+      elos+
+      '<div class="ramp"><b>Your ramp</b> &middot; '+p.ramp[audience]+'</div>'+
+      '</div>';
+    d.querySelector(".path-head").onclick=()=>d.classList.toggle("open");
+    z.appendChild(d);
+  });
+}
+
+/* glossary */
+function renderGlossary(filter){
+  const g=$("gGrid"); g.innerHTML="";
+  const f=(filter||"").toLowerCase();
+  DATA.glossary.filter(x=>!f||x.term.toLowerCase().includes(f)||x.def.toLowerCase().includes(f))
+    .forEach(x=>{
+      const d=document.createElement("div");
+      d.className="g-item";
+      d.innerHTML='<div class="g-term">'+x.term+'</div><div class="g-def">'+x.def+'</div>';
+      g.appendChild(d);
+    });
+  if(!g.children.length) g.innerHTML='<div style="color:var(--faint);font-size:12.5px;font-style:italic">No terms match.</div>';
+}
+$("gSearch").addEventListener("input",e=>renderGlossary(e.target.value));
+
+setAudience("new");
+renderGlossary("");
+</script>
+</body>
+</html>
