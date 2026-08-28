@@ -1050,17 +1050,23 @@ Assessed against that constraint:
 | **Local markdown** | Yes, ordinary file operations | Strong for the design record, with no stakeholder visibility at all |
 | **Planner or a SharePoint list** | Not practically | Poor. No usable command-line surface, so the hard-dependency skills degrade badly |
 
-**Recommendation: Azure DevOps Boards, declared as "Other", with a written workflow.** It satisfies the agent-drivability constraint, it has native blocking relationships which `wayfinder` explicitly prefers ("Blocking uses the tracker's **native** dependency relationship: essential because it renders the frontier *visually* in the tracker's own UI"), and it is a system of record your stakeholders can already see.
+**Decision: Azure DevOps Boards, declared as "Other", with a written workflow.** It satisfies the agent-drivability constraint, it has native blocking relationships which `wayfinder` explicitly prefers ("Blocking uses the tracker's **native** dependency relationship: essential because it renders the frontier *visually* in the tracker's own UI"), and it is a system of record your stakeholders can already see.
 
-If Azure DevOps is not available, use **local markdown** for the design record and maintain a deliberate, stated synchronization rule to whatever the business tracks work in. Be explicit that this is a two-system arrangement with a manual reconciliation step, rather than pretending the markdown is the system of record.
+Fallback if Azure DevOps becomes unavailable: **local markdown** for the design record, with a deliberate, stated synchronization rule to whatever the business tracks work in. Be explicit that this is a two-system arrangement with a manual reconciliation step, rather than pretending the markdown is the system of record.
 
-Whichever you choose, `docs/agents/issue-tracker.md` must contain the concrete command forms, in the shape the GitHub template uses: how to create an item, read one with its comments, list by label, comment, apply and remove labels, close, and the wayfinding operations (create a parent map item, create a child, add a blocking link, query the frontier, claim, resolve). Without those concrete forms the skills guess, and guessed commands fail silently.
+`docs/agents/issue-tracker.md` must contain the concrete command forms, in the shape the GitHub template uses: how to create an item, read one with its comments, list by label, comment, apply and remove labels, close, and the wayfinding operations (create a parent map item, create a child, add a blocking link, query the frontier, claim, resolve). Without those concrete forms the skills guess, and guessed commands fail silently. Section 5.6 supplies that content, ready to paste.
+
+Three platform differences change the wording of the tracker document, and all three are surface rather than mechanism:
+
+- **Azure Boards has tags, not labels.** The five triage roles map to tag strings, set through the `System.Tags` field. Everywhere a skill says "apply the label", read "apply the tag".
+- **Comments are a parameter, not a subcommand.** There is no `comment` verb. A comment is added by `az boards work-item update --discussion "..."`, which means every triage note and resolution comment rides on an update call.
+- **Closing is a state change, not a verb.** There is no `close` command. Set `System.State` to the closed state your process template actually uses, which varies: Agile uses `Closed`, Scrum uses `Done`, Basic uses `Done`. Confirm yours once and write the literal string into the tracker document rather than leaving it generic.
 
 ### 5.3 Section B: triage labels
 
-The skill's default is the five canonical roles with the label string equal to the role name. Two changes, both surface, both justified in 3.3:
+The skill's default is the five canonical roles with the label string equal to the role name. Two changes, both surface, both justified in 3.3. Note that on Azure Boards these are **tags**, so the right-hand column is the tag string written into `System.Tags`:
 
-| Canonical role | Your label | Meaning |
+| Canonical role | Your tag | Meaning |
 | --- | --- | --- |
 | `needs-triage` | `needs-triage` | Awaiting assessment |
 | `needs-info` | `awaiting-requester` | Blocked pending information from the person who raised it |
@@ -1070,7 +1076,9 @@ The skill's default is the five canonical roles with the label string equal to t
 
 Categories: keep the two canonical ones, renaming `bug` to `defect` for a business-facing audience. Resist adding more, because the state machine's conflict detection depends on exactly one category and one state per item.
 
-Add `needs-security-review` and `needs-license-review` as free-standing labels **outside** the state machine, and say so explicitly in `docs/agents/triage-labels.md`. They are real routing signals in your work, but making them state roles breaks the invariant that lets `triage` detect a conflicting state.
+Add `needs-security-review` and `needs-license-review` as free-standing tags **outside** the state machine, and say so explicitly in `docs/agents/triage-labels.md`. They are real routing signals in your work, but making them state roles breaks the invariant that lets `triage` detect a conflicting state.
+
+One mechanical caution specific to Azure Boards: `System.Tags` is written as a **whole-field replacement**, not as an add or remove operation. Setting it to `ready-for-agent` silently drops every other tag on the item. So "apply a tag" is really read-modify-write: read the current tags, change the one role you mean to change, and write the full set back. Write that instruction into the tracker document, because an agent following the GitHub template's `--add-label` mental model will quietly erase the category tag every time it changes state.
 
 ### 5.4 Section C: domain documents
 
@@ -1086,6 +1094,122 @@ Four things the skill will not ask about but that your environment needs:
 2. **A PowerShell wizard template.** Translate `template.sh` once, keeping the helper set and the discipline that the library above the stage marker is never hand-edited. Everything you build with `wizard` depends on this existing.
 3. **The harness pattern, written down.** Document the child-flow harness convention (schema on the trigger, fixture files, Condition plus Terminate assertion, where fixtures live) as a runbook, so that every subsequent harness looks the same rather than being reinvented.
 4. **The export and commit procedure.** Document how solutions, site templates, and agent configuration get exported and committed, and when. Without this the repository drifts out of sync with the tenant within weeks and the diff surface stops being trustworthy.
+
+### 5.6 `docs/agents/issue-tracker.md`, ready to paste
+
+This is the "Other" workflow prose the setup skill records, written in the shape of the repository's own `issue-tracker-github.md` so the skills find what they expect. Paste it as `docs/agents/issue-tracker.md` and fill the three bracketed values on first use.
+
+Verification status, stated so you know what to trust: the link type reference names and their direction, and the relation types accepted by the CLI, were confirmed against Microsoft's published documentation. The three bracketed values below are environment-specific and must be confirmed against your own organization before the document is relied on.
+
+```markdown
+# Issue tracker: Azure DevOps Boards
+
+Issues, specs, and wayfinding maps for this repo live as Azure Boards work items.
+Use the `az boards` CLI (the `azure-devops` extension) for all operations.
+
+## Fixed values for this project
+
+- Organization: `https://dev.azure.com/[ORG]`
+- Project: `[PROJECT]`
+- Work item type used for issues, specs, and tickets: `[TYPE]` (commonly `Issue` on
+  the Basic process, `User Story` on Agile, `Product Backlog Item` on Scrum)
+- Closed state string: `[CLOSED-STATE]` (`Closed` on Agile, `Done` on Scrum and Basic)
+
+Set the defaults once so no command needs to repeat them:
+
+    az devops configure --defaults organization=https://dev.azure.com/[ORG] project=[PROJECT]
+
+## Conventions
+
+- **Create an item**: `az boards work-item create --title "..." --type "[TYPE]"
+  --description "..." --fields "System.Tags=needs-triage"`.
+  Returns JSON; the new id is `.id`.
+- **Read an item**: `az boards work-item show --id <id>`. Comments are not included
+  in that payload; fetch them separately with
+  `az boards work-item relation list --id <id>` for links, and read the discussion
+  through the work item's `_links` or the REST comments endpoint.
+- **List by tag**: use a WIQL query (see below). There is no `--label` filter.
+- **Comment on an item**: `az boards work-item update --id <id> --discussion "..."`.
+  There is no separate comment command; the comment rides on an update.
+- **Apply / change a triage tag**: `System.Tags` is a whole-field replacement, so this
+  is read-modify-write, never an append:
+  1. `az boards work-item show --id <id> --query "fields.\"System.Tags\"" -o tsv`
+  2. Change only the one role you mean to change, keeping every other tag.
+  3. `az boards work-item update --id <id> --fields "System.Tags=<full semicolon-separated set>"`
+  Writing a bare tag string without step 1 silently drops the category tag.
+- **Close**: `az boards work-item update --id <id> --state "[CLOSED-STATE]" --discussion "..."`.
+  Closing is a state change, not a delete.
+
+## Queries
+
+All listing is WIQL, run with `az boards query --wiql "..."`.
+
+- **Everything needing attention** (untagged, or awaiting triage):
+
+      SELECT [System.Id], [System.Title], [System.Tags], [System.State]
+      FROM workitems
+      WHERE [System.TeamProject] = '[PROJECT]'
+        AND [System.State] <> '[CLOSED-STATE]'
+        AND ([System.Tags] CONTAINS 'needs-triage' OR [System.Tags] IS EMPTY)
+      ORDER BY [System.CreatedDate] ASC
+
+- **Ready for an agent to pick up**: same shape, with
+  `[System.Tags] CONTAINS 'ready-for-agent'`.
+
+Tags are matched with `CONTAINS`, never `=`, because the field holds a
+semicolon-separated set.
+
+## When a skill says "publish to the issue tracker"
+
+Create a work item of type `[TYPE]` with the spec or ticket body as its description,
+and set `System.Tags` to `ready-for-agent`.
+
+## When a skill says "fetch the relevant ticket"
+
+`az boards work-item show --id <id>`, plus its relations and discussion.
+
+## Wayfinding operations
+
+Used by `wayfinder`. The **map** is a single work item; its tickets are **child**
+work items of it.
+
+- **Map**: a work item tagged `wayfinder:map`, holding the Destination / Notes /
+  Decisions-so-far / Not-yet-specified body.
+- **Child ticket**: create the ticket, then link it to the map:
+
+      az boards work-item relation add --id <ticket-id> --relation-type parent \
+        --target-id <map-id>
+
+  Tag each ticket `wayfinder:<type>` (`research`, `prototype`, `grilling`, `task`).
+- **Blocking**: use the native dependency link. On Azure Boards, **Predecessor** is
+  the item that must complete first, so a ticket is blocked by its predecessors:
+
+      az boards work-item relation add --id <blocked-ticket> \
+        --relation-type predecessor --target-id <blocker-ticket>
+
+  The underlying reference names are `System.LinkTypes.Dependency-Reverse`
+  (Predecessor) and `System.LinkTypes.Dependency-Forward` (Successor). This link
+  renders in the Boards UI and in delivery plans, which is why it is preferred over
+  a body convention. Run `az boards work-item relation list-type` once to confirm the
+  exact strings your organization accepts.
+- **Frontier query**: the map's open children that have no open predecessor and no
+  assignee. Query the children, then for each,
+  `az boards work-item relation list --id <id>` and drop any with a predecessor whose
+  state is not `[CLOSED-STATE]`.
+- **Claim**: `az boards work-item update --id <id> --assigned-to "<you>"`, before any
+  other work in the session.
+- **Resolve**: `az boards work-item update --id <id> --discussion "<answer>"
+  --state "[CLOSED-STATE]"`, then append a context pointer (gist plus link) to the
+  map's Decisions-so-far.
+
+## Item URLs
+
+Refer to items by title in anything a human reads, per `wayfinder`'s "Refer by name"
+rule. The link behind the name is
+`https://dev.azure.com/[ORG]/[PROJECT]/_workitems/edit/<id>`.
+```
+
+Two things above are worth calling out because they are the places this will break if treated as equivalent to the GitHub template. The tag replacement behaviour is a genuine trap: the GitHub template's `--add-label` is additive and the Azure Boards equivalent is not, so an agent carrying the GitHub mental model across will erase tags it never intended to touch. And the predecessor direction is easy to invert: the blocker is the predecessor, so the relation is added *on the blocked item, pointing at the blocker*, which is the opposite of how people usually say it out loud.
 
 ---
 
